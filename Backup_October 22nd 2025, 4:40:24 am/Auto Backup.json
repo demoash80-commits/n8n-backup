@@ -1,0 +1,250 @@
+{
+  "createdAt": "2025-10-22T04:30:01.279Z",
+  "updatedAt": "2025-10-22T08:20:35.000Z",
+  "id": "fOpyGlyqAZkn0Fr9",
+  "name": "Auto Backup",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1408,
+        -560
+      ],
+      "id": "032771d4-9809-4829-8a77-e0ccf79a544d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -928,
+        -560
+      ],
+      "id": "35e87760-b458-4e4c-81d3-01a356fa1860",
+      "name": "Get many workflows",
+      "credentials": {
+        "n8nApi": {
+          "id": "MtSy7Oy2uhwitGAm",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36b30ca5-09f6-4e25-a398-c44cefd1ebdf",
+              "name": "FolderName",
+              "value": "=Backup_{{$('Schedule Trigger').item.json['Readable date']  }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1200,
+        -576
+      ],
+      "id": "e9a6d4ae-9ac4-4e31-b11a-7929ccaa6545",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -592,
+        -544
+      ],
+      "id": "0fce50a4-8d28-4237-bc38-1a741431719c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "94921e63-7bb5-40fb-8ead-15f014146c23",
+              "name": "nodes",
+              "value": "={{ JSON.stringify($json, null, 2) }}",
+              "type": "string"
+            },
+            {
+              "id": "a2e7ab9b-d8ff-4ce8-a405-bada5fcfdf3f",
+              "name": "filenames",
+              "value": "={{ $json.name }}.json",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -496
+      ],
+      "id": "7c001db1-911d-45a7-860c-f8b12c7ba405",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "nodes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        -496
+      ],
+      "id": "df3ec49c-d47f-4055-b205-7fef0cad9bc3",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "demoash80-commits",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-backup",
+          "mode": "list",
+          "cachedResultName": "n8n-backup",
+          "cachedResultUrl": "https://github.com/demoash80-commits/n8n-backup"
+        },
+        "filePath": "={{ $('Edit Fields').item.json.FolderName }}/{{ $('Edit Fields1').item.json.filenames }}",
+        "binaryData": true,
+        "commitMessage": "={{ $('Schedule Trigger').item.json.Timezone }} Backup Completed"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        -496
+      ],
+      "id": "67318257-d57e-4e9b-811f-1f5f534f3c9f",
+      "name": "Create a file",
+      "webhookId": "6165901e-3327-4555-a017-c06337daa5bf",
+      "credentials": {
+        "githubApi": {
+          "id": "g0KA2QsDhSsRl54v",
+          "name": "GitHub account 3"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many workflows": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get many workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Create a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "02356ea9-163b-486b-b9d0-45b393bf3910",
+  "triggerCount": 1,
+  "tags": []
+}
