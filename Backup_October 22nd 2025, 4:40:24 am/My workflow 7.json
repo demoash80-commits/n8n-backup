@@ -1,0 +1,264 @@
+{
+  "createdAt": "2025-10-21T06:40:45.927Z",
+  "updatedAt": "2025-10-21T10:34:17.000Z",
+  "id": "W54pA5DopmDkmZ47",
+  "name": "My workflow 7",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Consultation Form",
+        "formDescription": "Hey there,\nGlad to meet you.\nPlease fill the below form so we can get in touch",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Name Here!!!",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Domain Needed",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Consultation"
+                  },
+                  {
+                    "option": "Training"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "Email Here!",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        -112
+      ],
+      "id": "b040aa0a-6065-49d0-a4ad-a23ba416ab05",
+      "name": "On form submission",
+      "webhookId": "96b45405-bda1-4979-94cf-23049d3c68eb"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1paKRGNXCWSdZx1qu_b9m_kqhgQxAP9qAsuF3-Siucdg",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1paKRGNXCWSdZx1qu_b9m_kqhgQxAP9qAsuF3-Siucdg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1paKRGNXCWSdZx1qu_b9m_kqhgQxAP9qAsuF3-Siucdg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Service": "={{ $json['Domain Needed'] }}",
+            "Time": "={{ $json.submittedAt }}",
+            "Email": "={{ $json.Email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service",
+              "displayName": "Service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        -80
+      ],
+      "id": "8928e04b-5153-4a2b-9d42-11fff74c3c94",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qrEU2eVhIRKsDYba",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Response Mail",
+        "message": "=Hey  {{ $json.Name }} Thank you for Contacting Us.  We will Reach you Soon",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        -304
+      ],
+      "id": "267c80b7-0b3e-4abb-a625-0f859c468bde",
+      "name": "Send a message",
+      "webhookId": "11a3baa8-df72-44bd-9e55-d76ab1fe69b3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "im10ytgVrThuXJq8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contactName": "={{ $json.Name }}",
+        "additionalFields": {
+          "email": "={{ $json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        288,
+        160
+      ],
+      "id": "12be904c-3598-41f0-89cf-0c4c87076029",
+      "name": "Create a contact",
+      "credentials": {
+        "odooApi": {
+          "id": "Zz2OEUmJNTtY1qRK",
+          "name": "Odoo account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "opportunity",
+        "opportunityName": "={{ $json.Name }}",
+        "additionalFields": {
+          "email_from": "={{ $json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        240
+      ],
+      "id": "05d0fb44-c0ef-4900-b670-6d73a43885c5",
+      "name": "Create an opportunity",
+      "credentials": {
+        "odooApi": {
+          "id": "Zz2OEUmJNTtY1qRK",
+          "name": "Odoo account 6"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create a contact",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create an opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Create a contact": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "d8bfbe2c-e6c8-4699-a218-a10433db15b3",
+  "triggerCount": 1,
+  "tags": []
+}
