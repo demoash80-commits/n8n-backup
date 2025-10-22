@@ -1,0 +1,50 @@
+{
+  "createdAt": "2025-10-22T04:30:57.781Z",
+  "updatedAt": "2025-10-22T04:30:57.781Z",
+  "id": "1b1R3jBRlZbbIIlX",
+  "name": "My workflow 9",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "sample",
+        "formDescription": "hi",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "Email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2ff8a011-7305-4f66-aef9-6554f7664665",
+      "name": "On form submission",
+      "webhookId": "b0ca0a2a-6f27-4b48-8e0d-e90096e30483"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "223797ed-ce10-49fc-9de0-e7f5cdbeefdb",
+  "triggerCount": 0,
+  "tags": []
+}
